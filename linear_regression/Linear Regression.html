@@ -1,0 +1,87 @@
+---
+layout: post
+title: "The Linear Regression Treatment"
+description: What's the optimal number of layers in a neural network? One. Welcome to linear regression
+date: December 25, 2017
+featured: true
+---
+
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<d-code language="python">
+%matplotlib inline
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set()
+sns.set_context("paper")
+</d-code>
+
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+
+<d-code language="python">
+height_data = pd.read_csv('Galton.csv')
+</d-code>
+
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h1><p>Neural networks are all the rage nowadays: the solution to all our problems seem to be to add more layers. This article is a breath of air from the hype, to investigate it's roots: linear  regression.</p>
+<p>In case you've forgotten, here's a whirlwind recap. <strong>Regression</strong>, as a subset of <em>supervised learning</em>, is the task of predicting continuous-valued outputs from data. We'd like to find an <em>estimator</em> $\delta(X)$ that <em>best</em> predicts some output $Y$ best from input $X$. To formalize the concept of a "best" estimator, we need to borrow some terms from statistical decision theory.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-Five-Minute-Intro-to-Decision-Theory">The Five-Minute Intro to Decision Theory<a class="anchor-link" href="#The-Five-Minute-Intro-to-Decision-Theory">&#182;</a></h2><p>The true connection between the random variables $X$ and $Y$ as a joint  probability distribution $\mathcal{P}(X,Y)$. By writing it stochastically,we capture inherent randomness in the connection between the two variables, and errors in measurement. Machine learning, in a nutshell, is the process of creating an estimator $\delta$ from observed training data $X_{train},Y_{train} \sim \mathcal{P}$</p>
+<p>An estimator $\delta(X)$ of $Y$ incurs a <strong>loss</strong> $L(\delta(X),Y)$, which measures the deviation between the predicted value and the true value. For example, common losses include</p>
+<ul>
+<li>Squared Error Loss: $L(\delta(X),Y) = (\delta(X)-Y)^2$</li>
+<li>Absolute Deviation Loss: $L(\delta(X),Y) = |\delta(X)-Y|$</li>
+</ul>
+<p>Choice of a loss induces the <strong>risk</strong> of an estimator,</p>
+$$R(\delta) = \mathbb{E}_{X,Y \sim \mathcal{P}}[L(\delta(X),Y)]$$<p>Risk can be thought of as the "expected" deviation between the predicted value and the true value of the output. The ideal estimator minimizes the risk, although since we do not know the true probability distribution $\mathcal{P}$, computing this risk is impossible.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Empirical-Risk-Minmization">Empirical Risk Minmization<a class="anchor-link" href="#Empirical-Risk-Minmization">&#182;</a></h2><p>Since computing the true risk is impossible, we consider the <strong>empirical risk</strong> of an estimator instead. This is given by 
+$$R_{emp}(\delta) = \frac1n \sum_{i=1}^n L(\delta(X_i),Y_i))$$</p>
+<p>Here, we use the notation $X_{train} = (X_i)_{i=1}^n$,$Y_{train} = (Y_i)_{i=1}^n$.</p>
+<p>The empirical risk is the average loss on the training data, and can also be interpreted as the true risk under the <em>empirical distribution</em>.</p>
+<p><strong>Empirical Risk Minimization</strong> is the procedure of finding the estimator $\delta_{emp}$ which minimizes the empirical risk as a surrogate for the true risk. Intuitively, this is a sensible idea, because we expect that if we have a lot of data, then the empirical risk of an estimator is roughly equal to the true risk.</p>
+<p><strong>Important Note:</strong> The empirical risk may be very different than the true risk if the distribution of $X_{train},Y_{train}$ is significantly different than the true distribution. This is a very common real-world experience, especially if there was sampling bias in collecting the data.</p>
+<p>We can rewrite the true risk in a way to reveal this structure
+$$
+R(\delta) = \underbrace{R(\delta) - R_{emp}(\delta)}_{\text{Generalization Error}} + \underbrace{R_{emp}(\delta)}_{\text{Empirical Risk}}
+$$</p>
+<p>In order to minimize the true risk, we need to minimize the generalization error and the empirical risk. If a estimator minimizes the empirical risk fully, it may be overfitting to the training data, and exhibit poor generalization.</p>
+
+</div>
+</div>
+</div>
+ 
+
